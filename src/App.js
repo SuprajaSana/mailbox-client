@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import LogIn from "./pages/LoginPage";
 import SignUp from "./pages/SignupPage";
 import Welcome from "./pages/WelcomePage";
+import ComposeMailPage from "./pages/ComposeMailPage";
 
 function App() {
 
@@ -20,6 +21,10 @@ function App() {
       </Route>
       <Route path="/welcome">
         {isLogin && <Welcome></Welcome>}
+        {!isLogin && <Redirect to="/login"></Redirect>}
+        </Route>
+        <Route path="/composemail">
+        {isLogin && <ComposeMailPage></ComposeMailPage>}
         {!isLogin && <Redirect to="/login"></Redirect>}
       </Route>
     </main>
