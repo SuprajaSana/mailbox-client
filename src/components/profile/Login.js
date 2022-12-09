@@ -1,68 +1,86 @@
 import { useRef, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useHistory, NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
+import { authActions } from "../../store/auth";
 import { Alert, Button, Card } from "react-bootstrap";
 import { Form, Container } from "react-bootstrap";
 
-const Signup = () => {
+const Login = () => {
   const emailInputRef = useRef("");
   const passwordInputRef = useRef("");
   const confirmpasswordRef = useRef("");
 
-  const [error, setError] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [isSendingRequest, setSendingRequest] = useState(false);
+  const [Error, setError] = useState(false);
+
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const submitFormHandler = (e) => {
     e.preventDefault();
 
     const emailValue = emailInputRef.current.value;
     const passwordValue = passwordInputRef.current.value;
-    const confirmpassword = confirmpasswordRef.current.value;
+    const ConfirmpasswordValue = confirmpasswordRef.current.value;
 
-    if (passwordValue != confirmpassword) {
+    setSendingRequest(true);
+
+    if (passwordValue != ConfirmpasswordValue) {
       setError(true);
       alert("Password does not match");
       setSendingRequest(false);
     } else {
       setSendingRequest(true);
-
-      fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyC1tWZ03i-QTCu57lXyzLqXeBl0tXlweeY",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: emailValue,
-            password: passwordValue,
-            returnSecureToken: true,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      ).then((response) => {
-        setSendingRequest(false);
-        if (response.ok) {
-          //return response.json();
-          console.log("User has successfully signed up");
-        } else {
-          response.json().then((data) => {
-            let errorMessage = "Authentication Failed!";
-            if (data && data.error && data.error.message) {
-              errorMessage = data.error.message;
+      if (isLogin) {
+        fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyC1tWZ03i-QTCu57lXyzLqXeBl0tXlweeY",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: emailValue,
+              password: passwordValue,
+              returnSecureToken: true,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((response) => {
+            setSendingRequest(false);
+            if (response.ok) {
+              return response.json();
+            } else {
+              response.json().then((data) => {
+                let errorMessage = "Authentication Failed!";
+                if (data && data.error && data.error.message) {
+                  errorMessage = data.error.message;
+                }
+                alert(errorMessage);
+              });
             }
-            alert(errorMessage);
+          })
+          .then((data) => {
+            console.log(data);
+            console.log(data.email);
+            dispatch(authActions.loginToken(data.idToken));
+            dispatch(authActions.login(data.email));
+            history.replace("/welcome");
+          })
+          .catch((err) => {
+            throw new Error(err.message);
           });
-        }
-      });
+      }
     }
   };
-
   return (
     <>
       <Container className="mt-5" style={{ width: "550px" }}>
         <Card className="shadow-lg" style={{ marginTop: "150px" }}>
           <Card.Header style={{ backgroundColor: "grey" }}>
-            <h4>SignUp</h4>
+            <h4>Login</h4>
           </Card.Header>
           <Card.Body>
             <Form onSubmit={submitFormHandler}>
@@ -96,17 +114,19 @@ const Signup = () => {
                   type="submit"
                   style={{ marginLeft: "400px" }}
                 >
-                  Sign Up
+                  Login
                 </Button>
               )}
-              {isSendingRequest && <Alert style={{textAlign:"center"}}>Sending Request</Alert>}
+              {isSendingRequest && (
+                <Alert style={{ textAlign: "center" }}>Sending Request</Alert>
+              )}
               <Card.Footer className="mt-3" style={{ textAlign: "center" }}>
-                <span>Already have an account?</span>
+                <span>Don't have an account?</span>
                 <NavLink
                   style={{ textDecoration: "none", color: "black" }}
-                  to="/login"
+                  to="/"
                 >
-                  Login
+                  SignUp
                 </NavLink>
               </Card.Footer>
             </Form>
@@ -117,4 +137,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Login;
