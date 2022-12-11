@@ -19,7 +19,7 @@ const Signup = () => {
     const passwordValue = passwordInputRef.current.value;
     const confirmpassword = confirmpasswordRef.current.value;
 
-    if (passwordValue != confirmpassword) {
+    if (passwordValue !== confirmpassword) {
       setError(true);
       alert("Password does not match");
       setSendingRequest(false);
@@ -99,7 +99,9 @@ const Signup = () => {
                   Sign Up
                 </Button>
               )}
-              {isSendingRequest && <Alert style={{textAlign:"center"}}>Sending Request</Alert>}
+              {isSendingRequest && (
+                <Alert style={{ textAlign: "center" }}>Sending Request</Alert>
+              )}
               <Card.Footer className="mt-3" style={{ textAlign: "center" }}>
                 <span>Already have an account?</span>
                 <NavLink

@@ -1,21 +1,17 @@
-import { useRef,useState } from "react";
-import { Col, Container, Row, Form, Card, Button } from "react-bootstrap";
+import { useRef, useState } from "react";
+import { Container, Form, Card, Button } from "react-bootstrap";
 import { Editor } from "react-draft-wysiwyg";
-
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const ComposeMail = () => {
+  const [email, setEmail] = useState();
 
-  const [email,sendEmail]=useState()
-
-  const emailInputRef = useRef('')
-  const emailToRef = useRef('')
-  const subjectToRef=useRef('')
+  const emailToRef = useRef("");
+  const subjectToRef = useRef("");
 
   const sendMailHandler = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-   // const email = emailInputRef.current.value;
     const to = emailToRef.current.value;
     const Subject = subjectToRef.current.value;
 
@@ -25,8 +21,8 @@ const ComposeMail = () => {
         method: "POST",
         body: JSON.stringify({
           email: email,
-          to:to,
-          subject:Subject,
+          to: to,
+          subject: Subject,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -45,11 +41,12 @@ const ComposeMail = () => {
         });
       }
     });
-  }
-  
-  const changeEmailHandler = (e) => {
-    sendEmail(e.target.value)
-  }
+  };
+
+  const onEditorStateChange = (event) => {
+    const bodyText = event.getCurrentContent().getPlainText();
+    setEmail(bodyText);
+  };
 
   return (
     <>
@@ -71,13 +68,14 @@ const ComposeMail = () => {
           </Card.Header>
           <Card.Body>
             <Editor
-               toolbarClassName="toolbarClassName"
-               wrapperClassName="wrapperClassName"
-               editorClassName="editorClassName"
+              onEditorStateChange={onEditorStateChange}
+              toolbarClassName="toolbarClassName"
+              wrapperClassName="wrapperClassName"
+              editorClassName="editorClassName"
             ></Editor>
           </Card.Body>
           <Card.Footer className="mt-3">
-            <Button variant="secondary" type="submit" onClick={sendMailHandler}>
+            <Button variant="primary" type="submit" onClick={sendMailHandler}>
               Send
             </Button>
           </Card.Footer>
