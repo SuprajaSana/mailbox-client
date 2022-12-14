@@ -1,17 +1,24 @@
-import { Button } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { useState } from "react";
 import Inbox from "../components/mailbox/Inbox";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleActions } from "../store/toggle";
+import { NavLink } from "react-router-dom";
 
 const InboxPage = () => {
-  const [showInbox, setInbox] = useState(false);
+  //const [showInbox, setInbox] = useState(false);
+  const showInbox = useSelector((state) => state.toggle.inboxIsVisible);
+  const count = useSelector((state) => state.toggle.number);
+
+  const dispatch = useDispatch();
 
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
 
   const fetchDataHandler = async () => {
-    setInbox(true);
+    //setInbox(true);
+    dispatch(toggleActions.toggle());
     setError(null);
-    console.log(1);
     try {
       const response = await fetch(
         "https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json"
@@ -41,10 +48,12 @@ const InboxPage = () => {
   return (
     <>
       <Button
+        variant="primary"
         onClick={fetchDataHandler}
-        style={{ marginRight: "20px", marginTop: "10px", marginLeft: "30px" }}
+        style={{ marginTop: "10px", marginLeft: "30px" }}
       >
         Inbox
+        <span style={{ marginLeft: "20px", color: "black" }}></span>
       </Button>
       {showInbox && (
         <ul>

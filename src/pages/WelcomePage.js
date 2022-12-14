@@ -1,4 +1,4 @@
-import { Row, Card, Col } from "react-bootstrap";
+import { Row, Card, Col, Button } from "react-bootstrap";
 import ComposeMailPage from "./ComposeMailPage";
 import InboxPage from "./InboxPage";
 
