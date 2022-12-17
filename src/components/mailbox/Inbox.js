@@ -1,13 +1,27 @@
 import { Container, Card, Button } from "react-bootstrap";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleActions } from "../../store/toggle";
 
 const Inbox = (props) => {
   const [email, setEmail] = useState(false);
 
+  const dispatch=useDispatch()
+
   const emailShownHandler = () => {
     setEmail(true);
+    dispatch(toggleActions.readEmails())
   };
+
+  function deleteMailHandler(newEmail) {
+    const response = fetch(
+      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email/${newEmail}.json`,
+      {
+        method: "DELETE",
+      }
+    );
+  }
 
   return (
     <>
@@ -27,6 +41,7 @@ const Inbox = (props) => {
                 {props.subject}
               </Button>
             </Link>
+            <button style={{marginLeft:'85%'}} onClick={(e)=>deleteMailHandler(props.id,e)}>DELETE</button>
           </ul>
         </Container>
       )}

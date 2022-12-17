@@ -53,7 +53,7 @@ const InboxPage = () => {
         style={{ marginTop: "10px", marginLeft: "30px" }}
       >
         Inbox
-        <span style={{ marginLeft: "20px", color: "black" }}></span>
+        <span style={{ marginLeft: "30px", color: "white" }}>UNREAD {count}</span>
       </Button>
       {showInbox && (
         <ul>

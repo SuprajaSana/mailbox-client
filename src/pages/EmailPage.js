@@ -7,11 +7,11 @@ import { toggleActions } from "../store/toggle";
 const EmailPage = (props) => {
     const params = useParams();
     
-    //const [emailData,setEmailData]=useState([])
+    const [emailData,setEmailData]=useState([])
 
     const data = useSelector((state) => state.toggle.emails);
 
-  //  setEmailData(data)
+    setEmailData(data)
   
   const dispatch=useDispatch()
 
@@ -51,7 +51,7 @@ const EmailPage = (props) => {
         fetchDataHandler();
       }, [fetchDataHandler]);  
 
-  const newEmail = data.find((mail) => mail.id === params.emailId);
+  const newEmail = emailData.find((mail) => mail.id === params.emailId);
 
   //console.log(newEmail);
 
