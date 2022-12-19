@@ -1,4 +1,4 @@
-import { Button, Card } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useState } from "react";
 import Inbox from "../components/mailbox/Inbox";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,8 +6,8 @@ import { toggleActions } from "../store/toggle";
 import { NavLink } from "react-router-dom";
 
 const InboxPage = () => {
-  //const [showInbox, setInbox] = useState(false);
-  const showInbox = useSelector((state) => state.toggle.inboxIsVisible);
+  const [showInbox, setInbox] = useState(false);
+  // const showInbox = useSelector((state) => state.toggle.inboxIsVisible);
   const count = useSelector((state) => state.toggle.number);
 
   const dispatch = useDispatch();
@@ -16,8 +16,8 @@ const InboxPage = () => {
   const [error, setError] = useState(null);
 
   const fetchDataHandler = async () => {
-    //setInbox(true);
-    dispatch(toggleActions.toggle());
+    setInbox(true);
+    //dispatch(toggleActions.toggle());
     setError(null);
     try {
       const response = await fetch(
@@ -53,7 +53,9 @@ const InboxPage = () => {
         style={{ marginTop: "10px", marginLeft: "30px" }}
       >
         Inbox
-        <span style={{ marginLeft: "30px", color: "white" }}>UNREAD {count}</span>
+        <span style={{ marginLeft: "30px", color: "white" }}>
+          UNREAD {count}
+        </span>
       </Button>
       {showInbox && (
         <ul>

@@ -1,66 +1,53 @@
 import { Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { toggleActions } from "../store/toggle";
 
 const EmailPage = (props) => {
-    const params = useParams();
-    
-    const [emailData,setEmailData]=useState([])
+  const [emailData, setEmailData] = useState();
+  const [newData, setNewData] = useState([]);
+  const [error, setError] = useState(null);
 
-    const data = useSelector((state) => state.toggle.emails);
+  const params = useParams();
 
-    setEmailData(data)
-  
-  const dispatch=useDispatch()
+  const fetchDataHandler = async () => {
+    setError(null);
 
-    const [newData, setNewData] = useState([]);
-    const [error, setError] = useState(null);
-  
-    const fetchDataHandler = async () => {
-      setError(null);
-      try {
-        const response = await fetch(
-          "https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json"
-        );
-  
-        if (!response.ok) {
-          throw new Error("Something went wrong...retrying");
-        }
-  
-        const data = await response.json();
-  
-        const transformedData = [];
-  
-        for (const key in data) {
-          transformedData.push({
-            id: key,
-            subject: data[key].subject,
-            email: data[key].email,
-          });
-        }
-        setNewData(transformedData);
-        dispatch(toggleActions.storeEmail(transformedData))
-      } catch (error) {
-        setError(error.message);
+    try {
+      const response = await fetch(
+        "https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json"
+      );
+
+      if (!response.ok) {
+        throw new Error("Something went wrong...retrying");
       }
-    };
 
-    useEffect(() => {
-        fetchDataHandler();
-      }, [fetchDataHandler]);  
+      const data = await response.json();
 
-  const newEmail = emailData.find((mail) => mail.id === params.emailId);
+      const transformedData = [];
 
-  //console.log(newEmail);
+      for (const key in data) {
+        transformedData.push({
+          id: key,
+          subject: data[key].subject,
+          email: data[key].email,
+        });
+      }
+      setNewData(transformedData);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
- // console.log(1);
-  return (
-    <Container>
-      <div>{newEmail.email}</div>
-    </Container>
-  );
+  useEffect(() => {
+    const newEmail = newData.find((mail) => mail.id === params.emailId);
+    setEmailData(newEmail);
+  }, [newData]);
+
+  useEffect(() => {
+    fetchDataHandler();
+  }, []);
+
+  return <Container>{emailData && <div>{emailData.email}</div>}</Container>;
 };
 
 export default EmailPage;

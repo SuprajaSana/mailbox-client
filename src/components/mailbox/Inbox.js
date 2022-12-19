@@ -41,7 +41,7 @@ const Inbox = (props) => {
                 {props.subject}
               </Button>
             </Link>
-            <button style={{marginLeft:'85%'}} onClick={(e)=>deleteMailHandler(props.id,e)}>DELETE</button>
+            <button style={{marginLeft:'90%'}} onClick={(e)=>deleteMailHandler(props.id,e)}>DELETE</button>
           </ul>
         </Container>
       )}

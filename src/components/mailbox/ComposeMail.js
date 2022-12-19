@@ -2,11 +2,13 @@ import { useRef, useState } from "react";
 import { Container, Form, Card, Button } from "react-bootstrap";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleActions } from "../../store/toggle";
 
 const ComposeMail = () => {
   const [email, setEmail] = useState();
+
+  const number = useSelector((state) => state.toggle.number);
 
   const emailToRef = useRef("");
   const subjectToRef = useRef("");
