@@ -1,11 +1,13 @@
 import { Button } from "react-bootstrap";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Inbox from "../components/mailbox/Inbox";
 import { useDispatch, useSelector } from "react-redux";
+import { toggleActions } from "../store/toggle";
+
+let id;
 
 const InboxPage = () => {
-  const [showInbox, setInbox] = useState(false);
-  // const showInbox = useSelector((state) => state.toggle.inboxIsVisible);
+  const showInbox = useSelector((state) => state.toggle.inboxIsVisible);
   const count = useSelector((state) => state.toggle.number);
 
   const dispatch = useDispatch();
@@ -13,14 +15,20 @@ const InboxPage = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
 
-  const fetchDataHandler = async () => {
-    setInbox(true);
-    //dispatch(toggleActions.toggle());
+  let response;
+
+  const fetchDataHandler = useCallback( async () => {
+    dispatch(toggleActions.toggle());
     setError(null);
     try {
-      const response = await fetch(
+       response = await fetch(
         "https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json"
       );
+
+       id=setInterval(() => {
+         response = fetch("https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json")
+      }, 2000); 
+
 
       if (!response.ok) {
         throw new Error("Something went wrong...retrying");
@@ -41,7 +49,7 @@ const InboxPage = () => {
     } catch (error) {
       setError(error.message);
     }
-  };
+  },[]);
 
   return (
     <>

@@ -8,6 +8,8 @@ import { toggleActions } from "../../store/toggle";
 const ComposeMail = () => {
   const [email, setEmail] = useState();
 
+  const fromEmail=useSelector(state=>state.auth.email)
+
   const emailToRef = useRef("");
   const subjectToRef = useRef("");
 
@@ -25,7 +27,6 @@ const ComposeMail = () => {
         method: "POST",
         body: JSON.stringify({
           email: email,
-          to: to,
           subject: Subject,
         }),
         headers: {

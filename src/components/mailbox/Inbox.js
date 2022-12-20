@@ -7,22 +7,21 @@ import { toggleActions } from "../../store/toggle";
 const Inbox = (props) => {
   const [email, setEmail] = useState(false);
 
-  const [showEmail, setHideEmail] = useState(true);
+  const resShown=useSelector(state=>state.toggle.emailSeen)
 
   const dispatch = useDispatch();
 
-  const emailShownHandler = () => {
+  const emailShownHandler = (newEmail,emailSeen) => {
     setEmail(true);
     dispatch(toggleActions.readEmails());
-    setHideEmail(false);
   };
 
   function deleteMailHandler(newEmail) {
-    const response = fetch(
-      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email/${newEmail}.json`,
-      {
-        method: "DELETE",
-      }
+      const response = fetch(
+        `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email/${newEmail}.json`,
+        {
+          method: "DELETE",
+        }
     );
   }
 
