@@ -1,6 +1,5 @@
 import { Redirect, Route } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useState, useEffect } from "react";
 
 import LogIn from "./pages/LoginPage";
 import SignUp from "./pages/SignupPage";
@@ -8,6 +7,7 @@ import Welcome from "./pages/WelcomePage";
 import ComposeMail from "./components/mailbox/ComposeMail";
 import InboxPage from "./pages/InboxPage";
 import EmailPage from "./pages/EmailPage";
+import SentMail from "./components/mailbox/SentMail";
 
 function App() {
   const isLogin = useSelector((state) => state.auth.isAuthenticated);
@@ -35,6 +35,10 @@ function App() {
         </Route>
         <Route path="/inbox/:emailId">
           {isLogin && <EmailPage></EmailPage>}
+          {!isLogin && <Redirect to="/login"></Redirect>}
+        </Route>
+        <Route path="/sent">
+          {isLogin && <SentMail></SentMail>}
           {!isLogin && <Redirect to="/login"></Redirect>}
         </Route>
       </main>

@@ -8,8 +8,6 @@ import { toggleActions } from "../../store/toggle";
 const ComposeMail = () => {
   const [email, setEmail] = useState();
 
-  const number = useSelector((state) => state.toggle.number);
-
   const emailToRef = useRef("");
   const subjectToRef = useRef("");
 

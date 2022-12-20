@@ -2,8 +2,6 @@ import { Button } from "react-bootstrap";
 import { useState } from "react";
 import Inbox from "../components/mailbox/Inbox";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleActions } from "../store/toggle";
-import { NavLink } from "react-router-dom";
 
 const InboxPage = () => {
   const [showInbox, setInbox] = useState(false);

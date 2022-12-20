@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initQuant = localStorage.getItem("emails");
+const initShowEmail = localStorage.getItem("emailRead");
 
 const initialState = {
   inboxIsVisible: false,
   number: initQuant,
+  showIsRead: true,
 };
 
 const toggleSlice = createSlice({
@@ -20,9 +22,18 @@ const toggleSlice = createSlice({
     },
     readEmails(state) {
       state.number = state.number - 1;
+      localStorage.setItem("emails", state.number);
     },
     removeNumber(state) {
       state.number = state.number - 1;
+    },
+    showAsRead(state) {
+      state.showIsRead = true;
+      localStorage.setItem("emailRead", state.showIsRead);
+    },
+    showAsUnread(state) {
+      state.showIsRead = false;
+      localStorage.setItem("emailRead", state.showIsRead);
     },
   },
 });

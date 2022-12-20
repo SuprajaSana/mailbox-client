@@ -1,6 +1,8 @@
 import { Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { toggleActions } from "../store/toggle";
+import { useDispatch } from "react-redux";
 
 const EmailPage = (props) => {
   const [emailData, setEmailData] = useState();
@@ -8,6 +10,8 @@ const EmailPage = (props) => {
   const [error, setError] = useState(null);
 
   const params = useParams();
+
+  const dispatch = useDispatch();
 
   const fetchDataHandler = async () => {
     setError(null);

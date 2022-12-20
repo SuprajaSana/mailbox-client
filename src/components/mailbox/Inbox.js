@@ -1,4 +1,4 @@
-import { Container, Card, Button } from "react-bootstrap";
+import { Container, Button } from "react-bootstrap";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,11 +7,14 @@ import { toggleActions } from "../../store/toggle";
 const Inbox = (props) => {
   const [email, setEmail] = useState(false);
 
-  const dispatch=useDispatch()
+  const [showEmail, setHideEmail] = useState(true);
+
+  const dispatch = useDispatch();
 
   const emailShownHandler = () => {
     setEmail(true);
-    dispatch(toggleActions.readEmails())
+    dispatch(toggleActions.readEmails());
+    setHideEmail(false);
   };
 
   function deleteMailHandler(newEmail) {
@@ -33,15 +36,20 @@ const Inbox = (props) => {
                 onClick={emailShownHandler}
                 variant="white"
                 style={{
-                  width: "100%",
+                  width: "90%",
                   borderColor: "black",
                   textAlign: "initial",
                 }}
               >
-                {props.subject}
+                <span>{props.subject}</span>
               </Button>
             </Link>
-            <button style={{marginLeft:'90%'}} onClick={(e)=>deleteMailHandler(props.id,e)}>DELETE</button>
+            <button
+              style={{ marginLeft: "85%" }}
+              onClick={(e) => deleteMailHandler(props.id, e)}
+            >
+              DELETE
+            </button>
           </ul>
         </Container>
       )}
@@ -50,3 +58,16 @@ const Inbox = (props) => {
 };
 
 export default Inbox;
+
+/* {!showEmailRead && (
+            <span
+              style={{
+                marginRight: "20px",
+                padding: "0.1rem",
+                backgroundColor: "blue",
+                borderRadius: "10px",
+              }}
+            >
+              .
+            </span>
+          )}   */
