@@ -1,24 +1,28 @@
 import { Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { toggleActions } from "../store/toggle";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 const EmailPage = (props) => {
   const [emailData, setEmailData] = useState();
   const [newData, setNewData] = useState([]);
   const [error, setError] = useState(null);
 
+  const [showMail, setMail] = useState(true);
+
   const params = useParams();
 
-  const dispatch = useDispatch();
+  const fromEmail = useSelector((state) => state.auth.email);
+
+  const userEmail = fromEmail.replace("@", "");
+  const newUserEmail = userEmail.replace(".", "");
 
   const fetchDataHandler = async () => {
     setError(null);
 
     try {
       const response = await fetch(
-        "https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json"
+        `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newUserEmail}.json`
       );
 
       if (!response.ok) {
@@ -51,7 +55,31 @@ const EmailPage = (props) => {
     fetchDataHandler();
   }, []);
 
-  return <Container>{emailData && <div>{emailData.email}</div>}</Container>;
+  function deleteMailHandler(newEmail) {
+    const response = fetch(
+      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newUserEmail}/${newEmail}.json`,
+      {
+        method: "DELETE",
+      }
+    );
+    setMail(false);
+  }
+
+  return (
+    <>
+      {showMail && (
+        <Container>{emailData && <div>{emailData.email}</div>}</Container>
+      )}
+      {showMail && (
+        <button
+          style={{ marginLeft: "85%" }}
+          onClick={(e) => deleteMailHandler(props.id, e)}
+        >
+          DELETE
+        </button>
+      )}
+    </>
+  );
 };
 
 export default EmailPage;

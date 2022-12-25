@@ -1,16 +1,48 @@
 import { Redirect, Route } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 import LogIn from "./pages/LoginPage";
 import SignUp from "./pages/SignupPage";
 import Welcome from "./pages/WelcomePage";
 import ComposeMail from "./components/mailbox/ComposeMail";
 import InboxPage from "./pages/InboxPage";
-import EmailPage from "./pages/EmailPage";
+import EmailPage from "./pages/EmailPageInbox";
 import SentMail from "./components/mailbox/SentMail";
+import EmailPageSent from "./pages/EmailPageSent";
+import { toggleActions } from "./store/toggle";
 
 function App() {
-  const isLogin = useSelector((state) => state.auth.isAuthenticated);
+  const isLogin = useSelector((state) => state.auth.email);
+  const initCount = useSelector((state) => state.toggle.number);
+
+  const fromEmail = useSelector((state) => state.auth.email);
+
+  let newFromUserEmail;
+
+  if (fromEmail) {
+    const fromuserEmail = fromEmail.replace("@", "");
+    newFromUserEmail = fromuserEmail.replace(".", "");
+  }
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchCountData = async () => {
+      const response = await fetch(
+        `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiverCount${newFromUserEmail}.json`
+      );
+
+      const data = await response.json();
+      dispatch(toggleActions.replaceCount(data));
+
+      if (!response.ok) {
+        throw new Error("Something went wrong");
+      }
+    };
+    fetchCountData().catch((error) => {
+      alert(error.message);
+    });
+  }, [dispatch]);
 
   return (
     <>
@@ -37,8 +69,12 @@ function App() {
           {isLogin && <EmailPage></EmailPage>}
           {!isLogin && <Redirect to="/login"></Redirect>}
         </Route>
-        <Route path="/sent">
+        <Route path="/sent" exact>
           {isLogin && <SentMail></SentMail>}
+          {!isLogin && <Redirect to="/login"></Redirect>}
+        </Route>
+        <Route path="/sent/:sentemailId">
+          {isLogin && <EmailPageSent></EmailPageSent>}
           {!isLogin && <Redirect to="/login"></Redirect>}
         </Route>
       </main>

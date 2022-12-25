@@ -1,20 +1,12 @@
-import { Container,Button } from "react-bootstrap";
+import { Container, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { toggleActions } from "../../store/toggle";
 
 const SentMail = (props) => {
-
-   const [email, setEmail] = useState(false);
-
-  const [showEmail, setHideEmail] = useState(true);
-
-  const dispatch = useDispatch();
+  const [email, setEmail] = useState(false);
 
   const emailShownHandler = () => {
     setEmail(true);
-    setHideEmail(false);
   };
 
   return (
@@ -22,7 +14,7 @@ const SentMail = (props) => {
       {!email && (
         <Container className="mt-1" style={{ marginLeft: "200px" }}>
           <ul>
-            <Link to={`/inbox/${props.id}`}>
+            <Link to={`/sent/${props.id}`}>
               <Button
                 onClick={emailShownHandler}
                 variant="white"
@@ -39,7 +31,7 @@ const SentMail = (props) => {
         </Container>
       )}
     </>
-    )
-}
+  );
+};
 
 export default SentMail;

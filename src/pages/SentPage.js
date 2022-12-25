@@ -1,12 +1,17 @@
 import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
+
 import SentMail from "../components/mailbox/SentMail";
 import { toggleActions } from "../store/toggle";
 
 const SentPage = () => {
   const showMailBox = useSelector((state) => state.toggle.sentMailIsVisible);
-  const count = useSelector((state) => state.toggle.number);
+
+  const fromEmail = useSelector((state) => state.auth.email);
+
+  const userEmail = fromEmail.replace("@", "");
+  const newUserEmail = userEmail.replace(".", "");
 
   const dispatch = useDispatch();
 
@@ -18,7 +23,7 @@ const SentPage = () => {
     setError(null);
     try {
       const response = await fetch(
-        "https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json"
+        `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/sender${newUserEmail}.json`
       );
 
       if (!response.ok) {

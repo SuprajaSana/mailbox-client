@@ -2,28 +2,89 @@ import { Container, Button } from "react-bootstrap";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleActions } from "../../store/toggle";
 
 const Inbox = (props) => {
   const [email, setEmail] = useState(false);
 
-  const resShown=useSelector(state=>state.toggle.emailSeen)
+  const showEmailRead = props.seenStatus;
+
+  const initCount = useSelector((state) => state.toggle.readNumber);
+
+  const fromEmail = useSelector((state) => state.auth.email);
+
+  const fromuserEmail = fromEmail.replace("@", "");
+  const newFromUserEmail = fromuserEmail.replace(".", "");
 
   const dispatch = useDispatch();
 
-  const emailShownHandler = (newEmail,emailSeen) => {
+  const emailShownHandler = async (id) => {
     setEmail(true);
-    dispatch(toggleActions.readEmails());
-  };
+    const response = await fetch(
+      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newFromUserEmail}/${id}.json`,
+      {
+        method: "DELETE",
+      }
+    );
 
-  function deleteMailHandler(newEmail) {
-      const response = fetch(
-        `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email/${newEmail}.json`,
+    const newResponse = await fetch(
+      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newFromUserEmail}.json`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          email: props.email,
+          subject: props.subject,
+          emailStatus: true,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    ).then((response) => {
+      if (response.ok) {
+        console.log("User sent mail");
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "Failed!";
+          if (data && data.error && data.error.message) {
+            errorMessage = data.error.message;
+          }
+          alert(errorMessage);
+        });
+      }
+    });
+
+    if (!showEmailRead) {
+      const deleteCountresponse = await fetch(
+        `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiverCount${newFromUserEmail}.json`,
         {
           method: "DELETE",
         }
-    );
-  }
+      );
+
+      const setnewEmailCount = await fetch(
+        `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiverCount${newFromUserEmail}.json`,
+        {
+          method: "PUT",
+          body: JSON.stringify(initCount),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      ).then((response) => {
+        if (response.ok) {
+          console.log("User sent mail");
+        } else {
+          response.json().then((data) => {
+            let errorMessage = "Failed!";
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            alert(errorMessage);
+          });
+        }
+      });
+    }
+  };
 
   return (
     <>
@@ -32,7 +93,7 @@ const Inbox = (props) => {
           <ul>
             <Link to={`/inbox/${props.id}`}>
               <Button
-                onClick={emailShownHandler}
+                onClick={(e) => emailShownHandler(props.id, e)}
                 variant="white"
                 style={{
                   width: "90%",
@@ -40,15 +101,21 @@ const Inbox = (props) => {
                   textAlign: "initial",
                 }}
               >
+                {!showEmailRead && (
+                  <span
+                    style={{
+                      marginRight: "20px",
+                      padding: "0.1rem",
+                      backgroundColor: "blue",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    .
+                  </span>
+                )}
                 <span>{props.subject}</span>
               </Button>
             </Link>
-            <button
-              style={{ marginLeft: "85%" }}
-              onClick={(e) => deleteMailHandler(props.id, e)}
-            >
-              DELETE
-            </button>
           </ul>
         </Container>
       )}
@@ -57,16 +124,3 @@ const Inbox = (props) => {
 };
 
 export default Inbox;
-
-/* {!showEmailRead && (
-            <span
-              style={{
-                marginRight: "20px",
-                padding: "0.1rem",
-                backgroundColor: "blue",
-                borderRadius: "10px",
-              }}
-            >
-              .
-            </span>
-          )}   */

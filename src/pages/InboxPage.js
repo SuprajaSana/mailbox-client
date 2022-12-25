@@ -1,14 +1,22 @@
 import { Button } from "react-bootstrap";
-import { useCallback, useState } from "react";
-import Inbox from "../components/mailbox/Inbox";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
+import Inbox from "../components/mailbox/Inbox";
 import { toggleActions } from "../store/toggle";
 
 let id;
 
-const InboxPage = () => {
+const InboxPage = (props) => {
   const showInbox = useSelector((state) => state.toggle.inboxIsVisible);
-  const count = useSelector((state) => state.toggle.number);
+
+  const fromEmail = useSelector((state) => state.auth.email);
+  const count = useSelector((state) => state.toggle.unreadNumber);
+
+  const [emailData, setEmailData] = useState();
+
+  const userEmail = fromEmail.replace("@", "");
+  const newUserEmail = userEmail.replace(".", "");
 
   const dispatch = useDispatch();
 
@@ -17,18 +25,19 @@ const InboxPage = () => {
 
   let response;
 
-  const fetchDataHandler = useCallback( async () => {
+  const fetchDataHandler = useCallback(async () => {
     dispatch(toggleActions.toggle());
     setError(null);
     try {
-       response = await fetch(
-        "https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json"
+      response = await fetch(
+        `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newUserEmail}.json`
       );
 
-       id=setInterval(() => {
-         response = fetch("https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json")
-      }, 2000); 
-
+      id = setInterval(() => {
+        response = fetch(
+          `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newUserEmail}.json`
+        );
+      }, 2000);
 
       if (!response.ok) {
         throw new Error("Something went wrong...retrying");
@@ -43,13 +52,42 @@ const InboxPage = () => {
           id: key,
           subject: data[key].subject,
           email: data[key].email,
+          seenStatus: data[key].emailStatus,
         });
       }
       setData(transformedData);
     } catch (error) {
       setError(error.message);
     }
-  },[]);
+  }, []);
+
+  useEffect(() => {
+    fetchDataHandler();
+  }, []);
+
+  const fetchEmailCountHandler = useCallback(async () => {
+    setError(null);
+    try {
+      const response = await fetch(
+        `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiverCount${newUserEmail}.json`
+      );
+
+      if (!response.ok) {
+        throw new Error("Something went wrong...retrying");
+      }
+
+      const data = await response.json();
+
+      setEmailData(data);
+      dispatch(toggleActions.readEmails(data));
+    } catch (error) {
+      setError(error.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchEmailCountHandler();
+  }, []);
 
   return (
     <>
@@ -59,7 +97,7 @@ const InboxPage = () => {
         style={{ marginTop: "10px", marginLeft: "30px" }}
       >
         Inbox
-        <span style={{ marginLeft: "30px", color: "white" }}>
+        <span style={{ marginLeft: "30px", color: "white" }} count={emailData}>
           UNREAD {count}
         </span>
       </Button>
@@ -71,6 +109,7 @@ const InboxPage = () => {
               id={data.id}
               subject={data.subject}
               email={data.email}
+              seenStatus={data.seenStatus}
             ></Inbox>
           ))}
         </ul>

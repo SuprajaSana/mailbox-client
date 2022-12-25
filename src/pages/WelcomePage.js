@@ -1,7 +1,9 @@
 import { Row, Card, Col } from "react-bootstrap";
+
 import ComposeMailPage from "./ComposeMailPage";
 import InboxPage from "./InboxPage";
 import SentPage from "./SentPage";
+import LogOutPage from "./LogoutPage";
 
 const Welcome = () => {
   return (
@@ -19,6 +21,9 @@ const Welcome = () => {
           </Card.Body>
           <Card.Body>
             <SentPage></SentPage>
+          </Card.Body>
+          <Card.Body>
+            <LogOutPage></LogOutPage>
           </Card.Body>
         </Col>
       </Row>

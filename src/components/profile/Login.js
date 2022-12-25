@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 import { useHistory, NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
-import { authActions } from "../../store/auth";
 import { Alert, Button, Card } from "react-bootstrap";
 import { Form, Container } from "react-bootstrap";
+
+import { authActions } from "../../store/auth";
 
 const Login = () => {
   const emailInputRef = useRef("");
@@ -63,8 +63,6 @@ const Login = () => {
             }
           })
           .then((data) => {
-            console.log(data);
-            console.log(data.email);
             dispatch(authActions.loginToken(data.idToken));
             dispatch(authActions.login(data.email));
             history.replace("/welcome");

@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initQuant = localStorage.getItem("emails");
-const initShowEmail = localStorage.getItem("emailSeen");
-
 const initialState = {
   inboxIsVisible: false,
-  number: initQuant,
-  emailSeen: false,
+  number: 0,
+  unreadNumber: 0,
+  readNumber: 0,
+  storeEmail: null,
   sentMailIsVisible: false,
+  seenEmail: false,
 };
 
 const toggleSlice = createSlice({
@@ -20,17 +20,24 @@ const toggleSlice = createSlice({
     toggleSentMail(state) {
       state.sentMailIsVisible = !state.sentMailIsVisible;
     },
-    addQuantity(state) {
-      state.number = state.number + 1;
-      state.emailSeen = false;
-      localStorage.setItem("emails", state.number);
-      //localStorage.setItem("emailSeen", state.emailSeen);
+    addQuantity(state, action) {
+      const count = action.payload;
+      state.number = state.number + count;
     },
-    readEmails(state) {
-      state.number = state.number - 1;
-      state.emailSeen = true;
-      localStorage.setItem("emails", state.number);
-      //localStorage.setItem("emailSeen", state.emailSeen);
+    readEmails(state, action) {
+      const count = action.payload;
+      if (count > 0) {
+        state.readNumber = count - 1;
+      }
+    },
+    storeEmail(state, action) {
+      state.storeEmail = action.payload;
+    },
+    replaceCount(state, action) {
+      state.unreadNumber = action.payload;
+    },
+    makeAsUnread(state) {
+      state.seenEmail = !state.seenEmail;
     },
   },
 });

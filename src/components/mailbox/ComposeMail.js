@@ -1,14 +1,21 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Container, Form, Card, Button } from "react-bootstrap";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useDispatch, useSelector } from "react-redux";
+
 import { toggleActions } from "../../store/toggle";
+
+let newUserEmail;
 
 const ComposeMail = () => {
   const [email, setEmail] = useState();
 
-  const fromEmail=useSelector(state=>state.auth.email)
+  const initCount = useSelector((state) => state.toggle.number);
+  const fromEmail = useSelector((state) => state.auth.email);
+
+  const fromuserEmail = fromEmail.replace("@", "");
+  const newFromUserEmail = fromuserEmail.replace(".", "");
 
   const emailToRef = useRef("");
   const subjectToRef = useRef("");
@@ -21,8 +28,39 @@ const ComposeMail = () => {
     const to = emailToRef.current.value;
     const Subject = subjectToRef.current.value;
 
+    const userEmail = to.replace("@", "");
+    newUserEmail = userEmail.replace(".", "");
+
     fetch(
-      "https://mailbox-client-69aa3-default-rtdb.firebaseio.com/email.json",
+      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newUserEmail}.json`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          email: email,
+          subject: Subject,
+          emailStatus: false,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    ).then((response) => {
+      if (response.ok) {
+        dispatch(toggleActions.storeEmail(newUserEmail));
+        console.log("User sent mail");
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "Failed!";
+          if (data && data.error && data.error.message) {
+            errorMessage = data.error.message;
+          }
+          alert(errorMessage);
+        });
+      }
+    });
+
+    fetch(
+      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/sender${newFromUserEmail}.json`,
       {
         method: "POST",
         body: JSON.stringify({
@@ -35,7 +73,7 @@ const ComposeMail = () => {
       }
     ).then((response) => {
       if (response.ok) {
-        dispatch(toggleActions.addQuantity());
+        dispatch(toggleActions.addQuantity(1));
         console.log("User sent mail");
       } else {
         response.json().then((data) => {
@@ -48,6 +86,26 @@ const ComposeMail = () => {
       }
     });
   };
+
+  useEffect(() => {
+    const emailCount = async () => {
+      if (newUserEmail) {
+        const response = await fetch(
+          `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiverCount${newUserEmail}.json`,
+          {
+            method: "PUT",
+            body: JSON.stringify(initCount),
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Something went wrong");
+        }
+      }
+    };
+    emailCount().catch((error) => {
+      alert(error.message);
+    });
+  }, [initCount]);
 
   const onEditorStateChange = (event) => {
     const bodyText = event.getCurrentContent().getPlainText();
