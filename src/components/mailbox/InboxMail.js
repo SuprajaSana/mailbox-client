@@ -2,8 +2,8 @@ import { Button } from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Inbox from "../components/mailbox/Inbox";
-import { toggleActions } from "../store/toggle";
+import Inbox from "./Inbox";
+import { toggleActions } from "../../store/toggle";
 
 let id;
 

@@ -6,9 +6,9 @@ import LogIn from "./pages/LoginPage";
 import SignUp from "./pages/SignupPage";
 import Welcome from "./pages/WelcomePage";
 import ComposeMail from "./components/mailbox/ComposeMail";
-import InboxPage from "./pages/InboxPage";
+import InboxPage from "./components/mailbox/InboxMail";
 import EmailPage from "./pages/EmailPageInbox";
-import SentMail from "./components/mailbox/SentMail";
+import SentMail from "./components/mailbox/Sent";
 import EmailPageSent from "./pages/EmailPageSent";
 import { toggleActions } from "./store/toggle";
 
@@ -42,7 +42,7 @@ function App() {
     fetchCountData().catch((error) => {
       alert(error.message);
     });
-  }, [dispatch]);
+  }, [newFromUserEmail]);
 
   return (
     <>

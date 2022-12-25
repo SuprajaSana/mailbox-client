@@ -1,8 +1,8 @@
 import { Row, Card, Col } from "react-bootstrap";
 
 import ComposeMailPage from "./ComposeMailPage";
-import InboxPage from "./InboxPage";
-import SentPage from "./SentPage";
+import InboxPage from "../components/mailbox/InboxMail";
+import SentPage from "../components/mailbox/SentMail";
 import LogOutPage from "./LogoutPage";
 
 const Welcome = () => {
