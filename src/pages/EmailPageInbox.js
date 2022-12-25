@@ -63,7 +63,7 @@ const EmailPage = (props) => {
       }
     );
     setMail(false);
-  }
+  } 
 
   return (
     <>
@@ -73,10 +73,10 @@ const EmailPage = (props) => {
       {showMail && (
         <button
           style={{ marginLeft: "85%" }}
-          onClick={(e) => deleteMailHandler(props.id, e)}
+          onClick={(e) => deleteMailHandler(emailData.id, e)}
         >
           DELETE
-        </button>
+        </button> 
       )}
     </>
   );

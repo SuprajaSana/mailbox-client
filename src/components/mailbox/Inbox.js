@@ -15,21 +15,13 @@ const Inbox = (props) => {
   const fromuserEmail = fromEmail.replace("@", "");
   const newFromUserEmail = fromuserEmail.replace(".", "");
 
-  const dispatch = useDispatch();
-
   const emailShownHandler = async (id) => {
     setEmail(true);
-    const response = await fetch(
-      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newFromUserEmail}/${id}.json`,
-      {
-        method: "DELETE",
-      }
-    );
 
     const newResponse = await fetch(
-      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newFromUserEmail}.json`,
+      `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newFromUserEmail}/${id}.json`,
       {
-        method: "POST",
+        method: "PUT",
         body: JSON.stringify({
           email: props.email,
           subject: props.subject,
