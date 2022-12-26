@@ -38,7 +38,7 @@ const toggleSlice = createSlice({
     },
     makeAsUnread(state) {
       state.seenEmail = !state.seenEmail;
-    }
+    },
   },
 });
 

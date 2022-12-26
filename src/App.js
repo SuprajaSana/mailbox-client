@@ -11,6 +11,7 @@ import EmailPage from "./pages/EmailPageInbox";
 import SentMail from "./components/mailbox/Sent";
 import EmailPageSent from "./pages/EmailPageSent";
 import { toggleActions } from "./store/toggle";
+import useHttp from "./hooks/use-http";
 
 function App() {
   const isLogin = useSelector((state) => state.auth.email);
@@ -26,7 +27,7 @@ function App() {
   }
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  /* useEffect(() => {
     const fetchCountData = async () => {
       const response = await fetch(
         `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiverCount${newFromUserEmail}.json`
@@ -42,6 +43,21 @@ function App() {
     fetchCountData().catch((error) => {
       alert(error.message);
     });
+  }, [newFromUserEmail]);   */
+
+  const { isLoading, error, sendRequest: fetchCount } = useHttp();
+
+  useEffect(() => {
+    const transformedData = (data) => {
+      dispatch(toggleActions.replaceCount(data));
+    };
+
+    fetchCount(
+      {
+        url: `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiverCount${newFromUserEmail}.json`,
+      },
+      transformedData
+    );
   }, [newFromUserEmail]);
 
   return (

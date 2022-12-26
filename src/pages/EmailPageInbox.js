@@ -63,7 +63,7 @@ const EmailPage = (props) => {
       }
     );
     setMail(false);
-  } 
+  }
 
   return (
     <>
@@ -76,7 +76,7 @@ const EmailPage = (props) => {
           onClick={(e) => deleteMailHandler(emailData.id, e)}
         >
           DELETE
-        </button> 
+        </button>
       )}
     </>
   );
