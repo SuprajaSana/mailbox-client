@@ -3,6 +3,7 @@ import { Container, Form, Card, Button } from "react-bootstrap";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useDispatch, useSelector } from "react-redux";
+import useHttp from "../../hooks/use-http";
 
 import { toggleActions } from "../../store/toggle";
 
@@ -22,6 +23,9 @@ const ComposeMail = () => {
 
   const dispatch = useDispatch();
 
+  const { isLoading, error, sendRequest: receiveTasks } = useHttp()
+  const {isSending,sendingerror,sendRequest:sendTasks}=useHttp()
+
   const sendMailHandler = (e) => {
     e.preventDefault();
 
@@ -31,7 +35,7 @@ const ComposeMail = () => {
     const userEmail = to.replace("@", "");
     newUserEmail = userEmail.replace(".", "");
 
-    fetch(
+   /* fetch(
       `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newUserEmail}.json`,
       {
         method: "POST",
@@ -57,9 +61,42 @@ const ComposeMail = () => {
           alert(errorMessage);
         });
       }
-    });
+    });  */
 
-    fetch(
+    const createReceiverEmail = (newUserEmail) => {
+      dispatch(toggleActions.storeEmail(newUserEmail));
+    };
+
+    receiveTasks(
+      {
+        url:  `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/receiver${newUserEmail}.json`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: { email:email,subject:Subject,emailStatus:false },
+      },
+      createReceiverEmail
+    );
+
+    const createSenderEmail = (newFromUserEmail) => {
+      dispatch(toggleActions.addQuantity(1));
+    };
+
+    sendTasks(
+      {
+        url:  `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/sender${newFromUserEmail}.json`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: { email:email,subject:Subject },
+      },
+      createSenderEmail
+    );
+
+
+   /* fetch(
       `https://mailbox-client-69aa3-default-rtdb.firebaseio.com/sender${newFromUserEmail}.json`,
       {
         method: "POST",
@@ -84,7 +121,7 @@ const ComposeMail = () => {
           alert(errorMessage);
         });
       }
-    });
+    }); */
   };
 
   useEffect(() => {
